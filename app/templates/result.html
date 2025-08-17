@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Результат — Excel → GeoJSON{% endblock %}
+{% block content %}
+  {% if ok %}
+    <div class="status ok">✅ Готово</div>
+    <p class="subtitle">{{ message }}</p>
+
+    {% if download_url %}
+      <div class="actions">
+        <a class="btn" href="{{ download_url }}">Скачать GeoJSON</a>
+        <a class="btn secondary" href="/">Новый файл</a>
+      </div>
+    {% endif %}
+
+    {% if headers %}
+      <details>
+        <summary><b>Итоговые заголовки</b></summary>
+        <ul class="list">
+        {% for h in headers %}<li><code>{{ h }}</code></li>{% endfor %}
+        </ul>
+      </details>
+    {% endif %}
+  {% else %}
+    <div class="status err">❌ Ошибка</div>
+    <p class="subtitle">{{ message }}</p>
+
+    {% if report %}
+      <details open>
+        <summary><b>Сравнение по позициям</b></summary>
+        <ol class="list">
+          {% for r in report.rows %}
+            <li>
+              {% if r.status == "match" %}✅ {{ r.actual }}
+              {% elif r.status == "missing" %}🔸 Отсутствует: <code>{{ r.expected }}</code>
+              {% elif r.status == "extra" %}🔸 Лишний: <code>{{ r.actual }}</code>
+              {% elif r.status == "mismatch" %}🔸 Ожидалось: <code>{{ r.expected }}</code>, найдено: <code>{{ r.actual }}</code>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      </details>
+    {% endif %}
+
+    <div class="actions">
+      {% if job_id and orig_name %}
+        <form action="/force" method="post">
+          <input type="hidden" name="job_id" value="{{ job_id }}">
+          <input type="hidden" name="orig_name" value="{{ orig_name }}">
+          <button class="btn" type="submit">Всё равно конвертировать</button>
+        </form>
+      {% endif %}
+      <a class="btn secondary" href="/">Назад</a>
+    </div>
+  {% endif %}
+{% endblock %}

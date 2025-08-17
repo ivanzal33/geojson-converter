@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.data/
+data/
+.git/
+*.xlsx
+*.geojson
+*-renamed.csv
+*-no_number_col.csv
+compare_geojson.py
